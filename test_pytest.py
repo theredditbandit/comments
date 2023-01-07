@@ -8,6 +8,16 @@ def test_isvalid():
     assert isvalid("youtube.com") == False
     assert isvalid("https://www.youtube.com/watch?v=6XYi5nSu_P0&list=WL&index=5&t=344s") == True
     assert isvalid("https://www.youtube.com/watch?v=dQw4w9WgXcQ") == True
+    assert isvalid("https://youtu.be/fT2KhJ8W-Kg") == True
 
-def test_getid():
-    ...
+def test_getid__format_youtube():
+    assert getid("https://www.youtube.com/watch?v=dQw4w9WgXcQ") == "dQw4w9WgXcQ"
+    assert getid("https://www.youtube.com/watch?v=LeSRHmKjNnM") == "LeSRHmKjNnM"
+
+def test_getid__format_youtube_WL_T():
+    assert getid("https://www.youtube.com/watch?v=6XYi5nSu_P0&list=WL&index=5&t=344s") == "6XYi5nSu_P0"
+    assert getid("https://www.youtube.com/watch?v=gKgSvAyPFlU&list=WL&index=6") == "gKgSvAyPFlU"
+
+def test_youtu_do_be():
+    assert getid("https://youtu.be/fT2KhJ8W-Kg") == "fT2KhJ8W-Kg"
+    assert getid("https://youtu.be/LeSRHmKjNnM") == "LeSRHmKjNnM"
