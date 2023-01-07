@@ -1,4 +1,3 @@
-import pytest
 from main import isvalid , getid
 
 def test_isvalid():
