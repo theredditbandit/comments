@@ -7,23 +7,34 @@ def theinput():
 
 
 def isvalid(URL):
-    if re.search(r"youtube.com", URL):
+    if re.search(r"youtube.com/watch\?v",URL):
         return True
     else:
-        print(c.RED + "Please Enter a Youtube URL ")
+        print(c.RED + "Please enter the URL to a Youtube Video ",c.WHITE + "Example : https://www.youtube.com/watch?v=dQw4w9WgXcQ",sep="\n")
         return False
+
+def getid(): # to get video ID from the youtube URL for the youtube API
+    ...
 
 
 def main():
+    # input loop
     while True:
-        if isvalid(theinput()):
+        URL = theinput()
+        if isvalid(URL):
             break
         else:
             continue
+    
+    id = getid(URL)
 
 if __name__ == "__main__":
-    main()
-# Input loop
+    try:
+        main()
+    except KeyboardInterrupt as k:
+        print(c.RED + "\nExiting the Program . . " + c.WHITE + ".")
+        exit(0)
+
 
 
 
