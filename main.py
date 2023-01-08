@@ -1,7 +1,7 @@
 import re
-from os import path, environ
+from os import path
 from colorama import Fore as c
-import googleapiclient.discovery
+from googleapiclient.discovery import build
 from tqdm import tqdm
 
 
@@ -11,7 +11,7 @@ def validate_api(key):
         pass
     else:
         exitprog("API key Invalid! ❌", 1)
-    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=key)
+    youtube = build("youtube", "v3", developerKey=key)
     request = youtube.commentThreads().list(
         part="id", maxResults=0, videoId="fT2KhJ8W-Kg"
     )
@@ -97,7 +97,7 @@ def exitprog(reason="", code=0):
 
 
 def main():
-    api = get_key()
+    API_KEY = get_key()
     while True:
         URL = theinput()
         if isvalid(URL):
