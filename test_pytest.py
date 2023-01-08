@@ -1,5 +1,5 @@
-from main import isvalid , getid
-
+import pytest
+from main import isvalid , getid , exitprog , validate_api
 def test_isvalid():
     assert isvalid("this is not a url") == False
     assert isvalid("Google.com") == False
@@ -20,3 +20,16 @@ def test_getid__format_youtube_WL_T():
 def test_youtu_do_be():
     assert getid("https://youtu.be/fT2KhJ8W-Kg") == "fT2KhJ8W-Kg"
     assert getid("https://youtu.be/LeSRHmKjNnM") == "LeSRHmKjNnM"
+
+
+def test_exitprog():
+    with pytest.raises(SystemExit) as e:
+        exitprog()
+    assert e.type == SystemExit
+    assert e.value.code == 0
+
+def test_validate_api():
+    with pytest.raises(SystemExit) as e:
+        validate_api("") # no api key passed
+    assert e.type == SystemExit
+    assert e.value.code == 1
