@@ -1,7 +1,8 @@
 import re
-from getpass import getpass
-from os import path
+from os import path, environ
 from colorama import Fore as c
+import googleapiclient.discovery
+from tqdm import tqdm
 
 
 def validate_api(key):
@@ -9,7 +10,18 @@ def validate_api(key):
     if key:
         pass
     else:
-        exitprog("API key Invalid!",1)
+        exitprog("API key Invalid! ❌", 1)
+    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=key)
+    request = youtube.commentThreads().list(
+        part="id", maxResults=0, videoId="fT2KhJ8W-Kg"
+    )
+    try:
+        for _ in tqdm(range(5), desc="Validating API key . . ."):
+            request.execute()
+    except Exception:
+        exitprog(f"API key {key} is invalid! ❌", 1)
+    else:
+        print("API Key is Valid ✔️")
 
 
 def get_key():
@@ -22,7 +34,7 @@ def get_key():
     if path.isfile(".env"):
         with open(".env") as env:
             API_KEY = env.readline()
-        print(c.GREEN + "Got API KEY! ")
+        print(c.GREEN + "Got API KEY! ✔️")
     else:
         print(
             c.YELLOW
@@ -30,7 +42,7 @@ def get_key():
             + c.BLUE
             + "https://console.cloud.google.com/apis/library/youtube.googleapis.com"
         )
-        API_KEY = getpass(c.WHITE + "Enter API Key (input is invisible by default):")
+        API_KEY = input(c.WHITE + "Enter API Key (Use Ctrl+Shift+V to paste):")
         validate_api(API_KEY)
         print(c.GREEN + "Saving API key . . " + c.WHITE + ". ")
         with open(".env", "w") as env:
@@ -76,7 +88,7 @@ def getid(url):
     return id
 
 
-def exitprog(reason="",code=0):
+def exitprog(reason="", code=0):
     if reason:
         print(c.RED + reason)
 
