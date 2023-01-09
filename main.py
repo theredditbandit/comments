@@ -4,7 +4,6 @@ from colorama import Fore as c
 from googleapiclient.discovery import build
 from tqdm import tqdm
 
-
 def validate_api(key):
     """_summary_ : to validate the user input."""
     if key:
@@ -51,7 +50,7 @@ def get_key():
 
 
 def theinput():
-    return input(c.LIGHTGREEN_EX + "Enter a Youtube URL >> ")
+    return input(c.LIGHTBLUE_EX + "Enter a Youtube URL >" + c.WHITE + "> ")
 
 
 def isvalid(url):
@@ -84,7 +83,7 @@ def getid(url):
     Returns: The video id
     """
     id = re.search(regex, url).group(1)
-    print(c.YELLOW + "Video ID Found : " + c.WHITE + id)
+    print(c.LIGHTGREEN_EX + "Video ID Found : " + c.WHITE + id)
     return id
 
 
@@ -94,6 +93,39 @@ def exitprog(reason="", code=0):
 
     print(c.RED + "\nExiting the Program . . " + c.WHITE + ".")
     exit(code)
+
+
+def get_comments(API_KEY, vidId, results=20, allComments=False, ignoreReplies=False):
+    youtube = build("youtube", "v3", developerKey=API_KEY)
+    if ignoreReplies:
+        print("Ignoring replies")
+        part = "id,replies,snippet"
+    else:
+        print("Getting replies")
+        part = "id,snippet"
+
+    request = youtube.commentThreads().list(
+        part=part, maxResults=results, order="time", videoId=vidId
+    )
+    for _ in tqdm(range(10), desc=c.GREEN + "Receiving  data . . ."):
+        response = request.execute()
+
+def get_number_of_comments():
+    try:
+        results = int(
+            input(
+                c.YELLOW
+                + "Enter the number of results you want to request (max is 100)"
+                + c.WHITE
+                + ": "
+            )
+        )
+    except Exception:
+        print(c.RED + "Invalid character")
+        print(c.YELLOW + "Taking the default value as 20")
+        results = 20
+
+    return results
 
 
 def main():
@@ -106,6 +138,30 @@ def main():
             continue
 
     id = getid(URL)
+    allComments = input(
+        c.YELLOW + "Do you want to get all the comments ?[Y/N] " + c.WHITE + ": "
+    )
+    if allComments.upper() == "N":
+        allComments = False
+        results = get_number_of_comments()
+    elif allComments.upper() == "Y":
+        allComments = True
+        results = 100
+    else:
+        exitprog("Invalid Choice!")
+
+    allReplies = input(
+        c.YELLOW
+        + "Do you want to ignore replies to individual comments ?[Y/N] "
+        + c.WHITE
+        + ": "
+    )
+    if allReplies.upper() == "N":
+        allReplies = False
+    elif allReplies.upper() == "Y":
+        allReplies = True
+
+    get_comments(API_KEY, id, results, allComments, allReplies)
 
 
 if __name__ == "__main__":
