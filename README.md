@@ -15,3 +15,6 @@ Navigate inside the yt-comments folder and run
 ```
 pip install -r requirements.txt
 ```
+
+## Demo
+[![asciicast](https://asciinema.org/a/14.png)](https://asciinema.org/a/2LHZe75y5K9nQYwcRqYxHD5bc)
