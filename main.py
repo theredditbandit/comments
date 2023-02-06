@@ -3,8 +3,9 @@ from os import path
 from colorama import Fore as c
 from googleapiclient.discovery import build
 from tqdm import tqdm
+import csv
 
-def validate_api(key):
+def validate_api(key: str) -> None:
     """_summary_ : to validate the user input."""
     if key:
         pass
@@ -95,20 +96,46 @@ def exitprog(reason="", code=0):
     exit(code)
 
 
-def get_comments(API_KEY, vidId, results=20, allComments=False, ignoreReplies=False):
+def get_comments(API_KEY, vidId, results=20, allComments=False): 
     youtube = build("youtube", "v3", developerKey=API_KEY)
-    if ignoreReplies:
-        print("Ignoring replies")
-        part = "id,replies,snippet"
-    else:
-        print("Getting replies")
-        part = "id,snippet"
 
-    request = youtube.commentThreads().list(
-        part=part, maxResults=results, order="time", videoId=vidId
-    )
-    for _ in tqdm(range(10), desc=c.GREEN + "Receiving  data . . ."):
-        response = request.execute()
+    part = "id,snippet"
+
+    def getComments():
+        request = youtube.commentThreads().list(
+            part=part, maxResults=results, order="time", videoId=vidId
+        )
+        for _ in tqdm(range(10), desc=c.GREEN + "Retrieving  Comments . . ."):
+            response = request.execute()
+        #  format the response dict to return a list of comments
+       
+        with open(f'{vidId}_comments.csv' , "w",encoding="utf-8") as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(['Author','Likes','Comment'])
+
+            for comment in response['items']:
+                writer.writerow([comment["snippet"]["topLevelComment"]["snippet"]["authorDisplayName"],
+                             comment["snippet"]["topLevelComment"]["snippet"]["likeCount"], 
+                             comment["snippet"]["topLevelComment"]["snippet"]["textOriginal"]])
+        print(c.GREEN + "Comments saved to file "+ c.WHITE+f"{vidId}_comments.csv ✔️")
+        
+    def getAllComments():
+        results = 100
+        responses = []
+
+        exitprog("Cannot get all comments , feature not implemented yet 😞")
+        # TODO: Implement getAllComments functionality
+        # basically have to write a recursive function that calls itself with the next page token and then we have a list of responses
+        # that would be [dict,dict,dict] where each dict is a response
+        # then we have to merge all the comments from all the responses into a single list
+        # and then we have to return that list
+
+    if allComments or results > 100:
+        responses = getAllComments()
+    else:
+        response = getComments()
+
+
 
 def get_number_of_comments():
     try:
@@ -150,18 +177,8 @@ def main():
     else:
         exitprog("Invalid Choice!")
 
-    allReplies = input(
-        c.YELLOW
-        + "Do you want to ignore replies to individual comments ?[Y/N] "
-        + c.WHITE
-        + ": "
-    )
-    if allReplies.upper() == "N":
-        allReplies = False
-    elif allReplies.upper() == "Y":
-        allReplies = True
 
-    get_comments(API_KEY, id, results, allComments, allReplies)
+    get_comments(API_KEY, id, results, allComments)
 
 
 if __name__ == "__main__":
