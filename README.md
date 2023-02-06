@@ -1,2 +1,2 @@
 # yt-comments
-A python package to return the YouTube comments on a video.
+A python package that returns the comments on a youtube video.
