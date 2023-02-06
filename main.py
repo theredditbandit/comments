@@ -39,7 +39,7 @@ def get_key():
     else:
         print(
             c.YELLOW
-            + "You can get your API key from here : "
+            + "You can get your API key from : "
             + c.BLUE
             + "https://console.cloud.google.com/apis/library/youtube.googleapis.com"
         )
@@ -127,23 +127,47 @@ def get_comments(API_KEY, vidId, results=20, allComments=False):
                     ]
                 )
         print(
-            c.GREEN + "Comments saved to file " + c.WHITE + f"{vidId}_comments.csv ✔️"
+            c.GREEN + "Comments saved to file " +
+            c.WHITE + f"{vidId}_comments.csv ✔️"
         )
 
     def getAllComments():
-        ...
-
-        exitprog("Cannot get all comments , feature not implemented yet 😞")
-        # TODO: Implement getAllComments functionality
-        # basically have to write a recursive function that calls itself with the next page token and then we have a list of responses
-        # that would be [dict,dict,dict] where each dict is a response
-        # then we have to merge all the comments from all the responses into a single list
-        # and then we have to return that list
+        next_page_token = ""
+        with open(f"{vidId}_comments.csv", "w", encoding="utf-8") as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(["Author", "Likes", "Comment"])
+            for _ in tqdm(range(100), desc=c.GREEN + "Fetching  All Comments . . ."):
+                while True:
+                    request = youtube.commentThreads().list(
+                        part=part,
+                        maxResults=results,
+                        order="time",
+                        videoId=vidId,
+                        pageToken=next_page_token,
+                    )
+                    response = request.execute()
+                    for comment in response["items"]:
+                        writer.writerow(
+                            [
+                                comment["snippet"]["topLevelComment"]["snippet"][
+                                    "authorDisplayName"
+                                ],
+                                comment["snippet"]["topLevelComment"]["snippet"][
+                                    "likeCount"
+                                ],
+                                comment["snippet"]["topLevelComment"]["snippet"][
+                                    "textOriginal"
+                                ],
+                            ]
+                        )
+                    next_page_token = response.get("nextPageToken", None)
+                    if not next_page_token:
+                        break
 
     if allComments or results > 100:
-        responses = getAllComments()
+        getAllComments()
     else:
-        response = getComments()
+        getComments()
 
 
 def get_number_of_comments():
@@ -175,7 +199,8 @@ def main():
 
     id = getid(URL)
     allComments = input(
-        c.YELLOW + "Do you want to get all the comments ?[Y/N] " + c.WHITE + ": "
+        c.YELLOW +
+        "Do you want to get all the comments ?[Y/N] " + c.WHITE + ": "
     )
     if allComments.upper() == "N":
         allComments = False
