@@ -5,6 +5,7 @@ from googleapiclient.discovery import build
 from tqdm import tqdm
 import csv
 
+
 def validate_api(key: str) -> None:
     """_summary_ : to validate the user input."""
     if key:
@@ -96,7 +97,7 @@ def exitprog(reason="", code=0):
     exit(code)
 
 
-def get_comments(API_KEY, vidId, results=20, allComments=False): 
+def get_comments(API_KEY, vidId, results=20, allComments=False):
     youtube = build("youtube", "v3", developerKey=API_KEY)
 
     part = "id,snippet"
@@ -105,23 +106,32 @@ def get_comments(API_KEY, vidId, results=20, allComments=False):
         request = youtube.commentThreads().list(
             part=part, maxResults=results, order="time", videoId=vidId
         )
-        for _ in tqdm(range(10), desc=c.GREEN + "Retrieving  Comments . . ."):
+        for _ in tqdm(range(10), desc=c.GREEN + "Fetching  Comments . . ."):
             response = request.execute()
         #  format the response dict to return a list of comments
-       
-        with open(f'{vidId}_comments.csv' , "w",encoding="utf-8") as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(['Author','Likes','Comment'])
 
-            for comment in response['items']:
-                writer.writerow([comment["snippet"]["topLevelComment"]["snippet"]["authorDisplayName"],
-                             comment["snippet"]["topLevelComment"]["snippet"]["likeCount"], 
-                             comment["snippet"]["topLevelComment"]["snippet"]["textOriginal"]])
-        print(c.GREEN + "Comments saved to file "+ c.WHITE+f"{vidId}_comments.csv ✔️")
-        
+        with open(f"{vidId}_comments.csv", "w", encoding="utf-8") as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(["Author", "Likes", "Comment"])
+
+            for comment in response["items"]:
+                writer.writerow(
+                    [
+                        comment["snippet"]["topLevelComment"]["snippet"][
+                            "authorDisplayName"
+                        ],
+                        comment["snippet"]["topLevelComment"]["snippet"]["likeCount"],
+                        comment["snippet"]["topLevelComment"]["snippet"][
+                            "textOriginal"
+                        ],
+                    ]
+                )
+        print(
+            c.GREEN + "Comments saved to file " + c.WHITE + f"{vidId}_comments.csv ✔️"
+        )
+
     def getAllComments():
-        results = 100
-        responses = []
+        ...
 
         exitprog("Cannot get all comments , feature not implemented yet 😞")
         # TODO: Implement getAllComments functionality
@@ -134,7 +144,6 @@ def get_comments(API_KEY, vidId, results=20, allComments=False):
         responses = getAllComments()
     else:
         response = getComments()
-
 
 
 def get_number_of_comments():
@@ -176,7 +185,6 @@ def main():
         results = 100
     else:
         exitprog("Invalid Choice!")
-
 
     get_comments(API_KEY, id, results, allComments)
 
