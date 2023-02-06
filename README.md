@@ -17,4 +17,7 @@ pip install -r requirements.txt
 ```
 
 ## Demo
-<a href="https://asciinema.org/a/2LHZe75y5K9nQYwcRqYxHD5bc"><img src="https://asciinema.org/a/14.png" width="836"/></a>
+
+
+https://user-images.githubusercontent.com/85390033/217035224-f34a0013-5efc-41bf-b771-9cd00cf0b4a4.mp4
+
