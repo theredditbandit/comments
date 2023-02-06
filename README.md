@@ -17,4 +17,4 @@ pip install -r requirements.txt
 ```
 
 ## Demo
-[![asciicast](https://asciinema.org/a/14.png)](https://asciinema.org/a/2LHZe75y5K9nQYwcRqYxHD5bc)
+<a href="https://asciinema.org/a/2LHZe75y5K9nQYwcRqYxHD5bc"><img src="https://asciinema.org/a/14.png" width="836"/></a>
