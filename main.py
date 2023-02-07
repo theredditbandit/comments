@@ -4,14 +4,15 @@ from colorama import Fore as c
 from googleapiclient.discovery import build
 from tqdm import tqdm
 import csv
+from sys import exit
 
 
-def validate_api(key: str) -> None:
+def validateApi(key: str) -> None:
     """_summary_ : to validate the user input."""
     if key:
         pass
     else:
-        exitprog("API key Invalid! ❌", 1)
+        exitProg("API key Invalid! ❌", 1)
     youtube = build("youtube", "v3", developerKey=key)
     request = youtube.commentThreads().list(
         part="id", maxResults=0, videoId="fT2KhJ8W-Kg"
@@ -20,12 +21,12 @@ def validate_api(key: str) -> None:
         for _ in tqdm(range(5), desc="Validating API key . . ."):
             request.execute()
     except Exception:
-        exitprog(f"API key {key} is invalid! ❌", 1)
+        exitProg(f"API key {key} is invalid! ❌", 1)
     else:
         print("API Key is Valid ✔️")
 
 
-def get_key():
+def getKey():
     """_summary_ : Function to prompt the user for their API key
 
     Returns:
@@ -44,14 +45,14 @@ def get_key():
             + "https://console.cloud.google.com/apis/library/youtube.googleapis.com"
         )
         API_KEY = input(c.WHITE + "Enter API Key (Use Ctrl+Shift+V to paste):")
-        validate_api(API_KEY)
+        validateApi(API_KEY)
         print(c.GREEN + "Saving API key . . " + c.WHITE + ". ")
         with open(".env", "w") as env:
             env.write(API_KEY)
     return API_KEY
 
 
-def theinput():
+def theInput():
     return input(c.LIGHTBLUE_EX + "Enter a Youtube URL >" + c.WHITE + "> ")
 
 
@@ -77,7 +78,7 @@ def isvalid(url):
         return False
 
 
-def getid(url):
+def getId(url):
     """_summary_ : Extract video ID from the youtube URL for the youtube API
 
     Args:
@@ -89,7 +90,7 @@ def getid(url):
     return id
 
 
-def exitprog(reason="", code=0):
+def exitProg(reason="", code=0):
     if reason:
         print(c.RED + reason)
 
@@ -97,7 +98,7 @@ def exitprog(reason="", code=0):
     exit(code)
 
 
-def get_comments(API_KEY, vidId, results=20, allComments=False):
+def getComments(API_KEY, vidId, results=20, allComments=False):
     youtube = build("youtube", "v3", developerKey=API_KEY)
 
     part = "id,snippet"
@@ -170,7 +171,7 @@ def get_comments(API_KEY, vidId, results=20, allComments=False):
         getComments()
 
 
-def get_number_of_comments():
+def getNumberOfComments():
     try:
         results = int(
             input(
@@ -188,34 +189,34 @@ def get_number_of_comments():
     return results
 
 
-def main():
-    API_KEY = get_key()
+def downloadComments():
+    API_KEY = getKey()
     while True:
-        URL = theinput()
+        URL = theInput()
         if isvalid(URL):
             break
         else:
             continue
 
-    id = getid(URL)
+    id = getId(URL)
     allComments = input(
         c.YELLOW +
         "Do you want to get all the comments ?[Y/N] " + c.WHITE + ": "
     )
     if allComments.upper() == "N":
         allComments = False
-        results = get_number_of_comments()
+        results = getNumberOfComments()
     elif allComments.upper() == "Y":
         allComments = True
         results = 100
     else:
-        exitprog("Invalid Choice!")
+        exitProg("Invalid Choice!")
 
-    get_comments(API_KEY, id, results, allComments)
+    getComments(API_KEY, id, results, allComments)
 
 
 if __name__ == "__main__":
     try:
-        main()
+        downloadComments()
     except KeyboardInterrupt as k:
-        exitprog()
+        exitProg()
