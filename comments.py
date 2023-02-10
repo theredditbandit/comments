@@ -101,6 +101,10 @@ def exitProg(reason="", code=0):
 def getComments(API_KEY, vidId, numberOfComments, results=20, allComments=False):
     youtube = build("youtube", "v3", developerKey=API_KEY)
 
+    if allComments:
+        filename = f"{vidId}_{numberOfComments}_comments.csv"
+    else:
+        filename = f"{vidId}_{results}_comments.csv"
     part = "id,snippet"
 
     def getComments():
@@ -110,7 +114,7 @@ def getComments(API_KEY, vidId, numberOfComments, results=20, allComments=False)
         print(c.GREEN + "Fetching  Comments . . .")
         response = request.execute()
 
-        with open(f"{vidId}_comments.csv", "w", encoding="utf-8") as csvfile:
+        with open(f"{filename}", "w", encoding="utf-8") as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Author", "Likes", "Comment"])
 
@@ -128,13 +132,13 @@ def getComments(API_KEY, vidId, numberOfComments, results=20, allComments=False)
                 )
         print(
             c.GREEN + "Comments saved to file " +
-            c.WHITE + f"{vidId}_comments.csv ✔️"
+            c.WHITE + f"{filename} ✔️"
         )
-        return f"{vidId}_comments.csv"
+        return f"{filename}"
 
     def getAllComments():
         next_page_token = ""
-        with open(f"{vidId}_comments.csv", "w", encoding="utf-8") as csvfile:
+        with open(f"{filename}", "w", encoding="utf-8") as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Author", "Likes", "Comment"])
             pbar = tqdm(total=numberOfComments, desc=c.GREEN +
@@ -169,8 +173,8 @@ def getComments(API_KEY, vidId, numberOfComments, results=20, allComments=False)
                 if not next_page_token:
                     pbar.close()
                     print(c.GREEN + "Comments saved to file " +
-                          c.WHITE + f"{vidId}_comments.csv ✔️")
-                    return f"{vidId}_comments.csv"
+                          c.WHITE + f"{filename} ✔️")
+                    return f"{filename}"
 
     if allComments or results > 100:
         return getAllComments()  # returns filename
@@ -231,7 +235,7 @@ def downloadComments():
         exitProg("Invalid Choice!")
 
     # returns filename
-    return getComments(API_KEY, id, totalComments, results, allComments)
+    return getComments(API_KEY, id, int(totalComments), results, allComments)
 
 
 if __name__ == "__main__":
