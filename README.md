@@ -1,5 +1,5 @@
 # comments
-A python package that returns the comments on a youtube video.
+A python program that returns the comments on a Youtube video.
 
 # Installing 
 
