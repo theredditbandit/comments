@@ -1,5 +1,5 @@
 import pytest
-from main import isvalid , getId , exitProg , validateApi
+from comments import isvalid , getId , exitProg , validateApi
 def test_isvalid():
     assert isvalid("this is not a url") == False
     assert isvalid("Google.com") == False
