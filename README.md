@@ -19,8 +19,9 @@ pip install -r requirements.txt
 ## Demo
 
 
-https://user-images.githubusercontent.com/85390033/217035224-f34a0013-5efc-41bf-b771-9cd00cf0b4a4.mp4
 
 
-## TODO
-Refactor the code so it is maintainable.
+https://user-images.githubusercontent.com/85390033/218767577-769af40f-cac0-4828-b5ca-f8594c189054.mp4
+
+
+
