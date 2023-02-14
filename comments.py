@@ -114,7 +114,7 @@ def getComments(API_KEY, vidId, numberOfComments, results=20, allComments=False)
         print(c.GREEN + "Fetching  Comments . . .")
         response = request.execute()
 
-        with open(f"{filename}", "w", encoding="utf-8") as csvfile:
+        with open(f"{filename}", "w",newline='', encoding="utf-8") as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Author", "Likes", "Comment"])
 
@@ -138,7 +138,7 @@ def getComments(API_KEY, vidId, numberOfComments, results=20, allComments=False)
 
     def getAllComments():
         next_page_token = ""
-        with open(f"{filename}", "w", encoding="utf-8") as csvfile:
+        with open(f"{filename}", "w",newline='', encoding="utf-8") as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Author", "Likes", "Comment"])
             pbar = tqdm(total=numberOfComments, desc=c.GREEN +
