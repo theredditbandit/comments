@@ -163,3 +163,4 @@ cython_debug/
 .vscode/
 response.json
 *.csv
+git-story_media/
